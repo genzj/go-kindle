@@ -67,6 +67,7 @@ tags
 
 # built files
 go-kindle
+__debug_bin
 
 # Visual Studio Code
 .vscode/

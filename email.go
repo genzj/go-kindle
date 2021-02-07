@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"mime"
+	"path/filepath"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -83,6 +85,9 @@ func newBookMessage(from, to, filename, fullpath string) *gomail.Message {
 	m.SetHeader("To", to)
 	m.SetHeader("Subject", "Upload file "+filename)
 	m.SetBody("text/html", "Send file "+filename+" to kindle")
-	m.Attach(fullpath)
+	m.Attach(
+		fullpath,
+		gomail.Rename(mime.QEncoding.Encode("utf-8", filepath.Base(filename))),
+	)
 	return m
 }
