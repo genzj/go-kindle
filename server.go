@@ -1,11 +1,13 @@
 package main
 
 import (
+	"crypto/subtle"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type serverContext struct {
@@ -32,6 +34,14 @@ func main() {
 	})
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
+	e.Use(middleware.BasicAuth(func(user, pass string, c echo.Context) (bool, error) {
+		config := c.(*serverContext).config
+		if subtle.ConstantTimeCompare([]byte(user), []byte(config.AuthUser)) == 1 &&
+			bcrypt.CompareHashAndPassword([]byte(config.AuthPass), []byte(pass)) == nil {
+			return true, nil
+		}
+		return false, nil
+	}))
 
 	csrfConfig := middleware.DefaultCSRFConfig
 	csrfConfig.TokenLookup = "form:_csrf"

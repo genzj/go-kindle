@@ -1,6 +1,8 @@
 package main
 
 import (
+	"encoding/base64"
+
 	env "github.com/Netflix/go-env"
 	"github.com/joho/godotenv"
 )
@@ -13,6 +15,9 @@ type configuration struct {
 
 	FromEmail string `env:"GOKINDLE_FROM_EMAIL"`
 	ToEmail   string `env:"GOKINDLE_TO_EMAIL"`
+
+	AuthUser string `env:"GOKINDLE_AUTH_USER"`
+	AuthPass string `env:"GOKINDLE_AUTH_PASS"`
 }
 
 func readConfig() *configuration {
@@ -26,5 +31,12 @@ func readConfig() *configuration {
 	if err != nil {
 		panic(err)
 	}
+
+	// auth password is base64 encoded
+	pass, err := base64.RawStdEncoding.DecodeString(config.AuthPass)
+	if err != nil {
+		panic(err)
+	}
+	config.AuthPass = string(pass)
 	return config
 }
