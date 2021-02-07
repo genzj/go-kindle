@@ -5,6 +5,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/labstack/gommon/log"
 )
 
 type serverContext struct {
@@ -14,11 +15,13 @@ type serverContext struct {
 }
 
 func main() {
+	log.SetLevel(log.DEBUG)
 	config := readConfig()
 	ch := startEmailHandler(config.SMTPServer, config.SMTPPort, config.SMTPUser, config.SMTPPass)
 	e := echo.New()
 	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
+			c.Logger().SetLevel(log.DEBUG)
 			cc := &serverContext{
 				c,
 				ch,

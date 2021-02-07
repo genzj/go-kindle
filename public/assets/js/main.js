@@ -6,6 +6,7 @@
         {
             autoProcessQueue: false,
             addRemoveLinks: true,
+            acceptedFiles: ".pdf,.mobi,.txt,.doc,.docx"
         }
     );
 
